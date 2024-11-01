@@ -47,3 +47,4 @@ func (a *API) AuthFork(username, password string) *API {
         forkedClient := a.Client.AuthFork(username, password)
         return NewAPIFromClient(forkedClient)
 }
+package api.Book.Get 
