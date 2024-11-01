@@ -1,50 +1,29 @@
+package main
+
 import (
-        "github.com/GitbookIO/go-gitbook-api/api"
-        "github.com/GitbookIO/go-gitbook-api/client"
+	"fmt"
+	"log"
+	"github.com/GitbookIO/go-gitbook-api/api"
+	"github.com/GitbookIO/go-gitbook-api/client"
 )
 
-type API struct {
-        // Author API client
-        Author *api.Author
-        // Authentication API client
-        Account *api.Account
-        // Individual book API client
-        Book *api.Book
-        // Book listing API client
-        Books *api.Books
-        // Builds API client
-        Builds *api.Builds
+// ฟังก์ชันหลัก
+func main() {
+	// ตั้งค่า APIOptions สำหรับ Client ของคุณ
+	opts := client.ClientOptions{
+		BaseURL: "https://api.gitbook.com", // URL ของ Gitbook API
+	}
 
-        // Internal client
-        Client *client.Client
+	// สร้างอินสแตนซ์ของ API
+	apiClient := NewAPI(APIOptions(opts))
+
+	// ตัวอย่างการเรียก Book.Get (คุณต้องกำหนด Book ID หรือ slug ที่ต้องการ)
+	bookID := "your-book-id-or-slug"
+	book, err := apiClient.Book.Get(bookID)
+	if err != nil {
+		log.Fatal("ไม่สามารถเรียกข้อมูลหนังสือได้:", err)
+	}
+
+	// แสดงข้อมูลของหนังสือ
+	fmt.Println("ข้อมูลหนังสือ:", book)
 }
-
-type APIOptions client.ClientOptions
-
-func NewAPI(opts APIOptions) *API {
-        c := client.NewClient(client.ClientOptions(opts))
-        return NewAPIFromClient(c)
-}
-
-func NewAPIFromClient(c *client.Client) *API {
-        return &API{
-                Author:  &api.Author{c},
-                Account: &api.Account{c},
-                Book:    &api.Book{c},
-                Books:   &api.Books{c},
-                Builds:  &api.Builds{c},
-
-                Client: c,
-        }
-}
-
-func (a *API) Fork(opts APIOptions) *API {
-        forkedClient := a.Client.Fork(client.ClientOptions(opts))
-        return NewAPIFromClient(forkedClient)
-}
-
-func (a *API) AuthFork(username, password string) *API {
-        forkedClient := a.Client.AuthFork(username, password)
-        return NewAPIFromClient(forkedClient)
-}
-package api.Book.Get 
