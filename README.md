@@ -1,5 +1,3 @@
-package gitbook
-
 import (
         "github.com/GitbookIO/go-gitbook-api/api"
         "github.com/GitbookIO/go-gitbook-api/client"
