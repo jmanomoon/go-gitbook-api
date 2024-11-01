@@ -1,64 +1,51 @@
-go-gitbook-api
-==============
-
-GitBook API client in GO (golang)
-
-## Documentation
-
-See [![GoDoc](https://godoc.org/github.com/GitbookIO/go-gitbook-api?status.png)](https://godoc.org/github.com/GitbookIO/go-gitbook-api)
-for automatically generated API documentation.
-
-Check out the **examples** below for quick and simple ways to start.
-
-### Simple Example
-
-```go
-package main
+package gitbook
 
 import (
-    "fmt"
-    "github.com/GitbookIO/go-gitbook-api"
+        "github.com/GitbookIO/go-gitbook-api/api"
+        "github.com/GitbookIO/go-gitbook-api/client"
 )
 
-func main() {
-    // Make API client
-    api := gitbook.NewAPI(gitbook.APIOptions{})
+type API struct {
+        // Author API client
+        Author *api.Author
+        // Authentication API client
+        Account *api.Account
+        // Individual book API client
+        Book *api.Book
+        // Book listing API client
+        Books *api.Books
+        // Builds API client
+        Builds *api.Builds
 
-    // Get book
-    book, err := api.Book.Get("gitbookio/javascript")
-
-    // Print results
-    fmt.Printf("book = %q\n", book)
-    fmt.Printf("error = %q\n", err)
+        // Internal client
+        Client *client.Client
 }
-```
 
-### Advanced Example
+type APIOptions client.ClientOptions
 
-```go
-package main
-
-import (
-    "fmt"
-    "github.com/GitbookIO/go-gitbook-api"
-)
-
-func main() {
-    // Make API client
-    api := gitbook.NewAPI(gitbook.APIOptions{
-        // Custom host instead of "https://api.gitbook.com"
-        Host: "http://localhost:5000/api/",
-
-        // Hit API with a specific user
-        Username: "username",
-        Password: "token or password",
-    })
-
-    // Get book
-    book, err := api.Book.Get("gitbookio/javascript")
-
-    // Print results
-    fmt.Printf("book = %q\n", book)
-    fmt.Printf("error = %q\n", err)
+func NewAPI(opts APIOptions) *API {
+        c := client.NewClient(client.ClientOptions(opts))
+        return NewAPIFromClient(c)
 }
-```
+
+func NewAPIFromClient(c *client.Client) *API {
+        return &API{
+                Author:  &api.Author{c},
+                Account: &api.Account{c},
+                Book:    &api.Book{c},
+                Books:   &api.Books{c},
+                Builds:  &api.Builds{c},
+
+                Client: c,
+        }
+}
+
+func (a *API) Fork(opts APIOptions) *API {
+        forkedClient := a.Client.Fork(client.ClientOptions(opts))
+        return NewAPIFromClient(forkedClient)
+}
+
+func (a *API) AuthFork(username, password string) *API {
+        forkedClient := a.Client.AuthFork(username, password)
+        return NewAPIFromClient(forkedClient)
+}
