@@ -18,7 +18,7 @@ func main() {
 	apiClient := NewAPI(APIOptions(opts))
 
 	// ตัวอย่างการเรียก Book.Get (คุณต้องกำหนด Book ID หรือ slug ที่ต้องการ)
-	bookID := "your-book-id-or-slug"
+	bookID := "Jiraphat3112"
 	book, err := apiClient.Book.Get(bookID)
 	if err != nil {
 		log.Fatal("ไม่สามารถเรียกข้อมูลหนังสือได้:", err)
